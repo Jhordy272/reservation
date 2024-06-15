@@ -14,6 +14,6 @@ public class mainController {
     
     @GetMapping("")
     public ResponseEntity<?> getClima(){
-        return new ResponseEntity<>("ok",HttpStatus.OK);
+        return new ResponseEntity<>("Te amo mucho!!",HttpStatus.OK);
     }
 }
