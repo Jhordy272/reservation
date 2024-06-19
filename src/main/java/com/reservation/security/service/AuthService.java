@@ -8,8 +8,11 @@ import com.reservation.security.entity.UserEntity;
 import com.reservation.security.jwt.JwtService;
 import com.reservation.security.repository.RolRepository;
 import com.reservation.security.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,21 +25,39 @@ public class AuthService {
     RolRepository rolRepository;
     @Autowired
     JwtService jwtService;
-    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public TokenDto login(LoginDto request) {
-        return null;
+        System.out.println("request " + request.getUser());
+        
+        UserDetails user = userRepository.findByUsername(request.getUser()).orElse(null);
+        if (user != null) {
+            System.out.println("username " + user.getUsername());
+            System.out.println("password " + user.getPassword());
+            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                return new TokenDto(jwtService.getToken(user));
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
     public TokenDto register(UserDto request) {
         UserEntity user = new UserEntity();
         RolEntity rol = rolRepository.findByName("CUSTOMER").orElse(null);
-        
+
+        user.setId(userRepository.findMaxId() + 1);
         user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        System.out.println("hashedPassword " + hashedPassword);
+        user.setPassword(hashedPassword);
         user.setEmail(request.getEmail());
         user.setRol(rol);
         userRepository.save(user);
-        
+
         return new TokenDto(jwtService.getToken(user));
     }
 }
