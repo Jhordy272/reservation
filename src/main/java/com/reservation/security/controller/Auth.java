@@ -30,14 +30,11 @@ public class Auth {
     
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto request){
-        List<UserEntity> listUsers = userRepository.findAll();
-        //return new ResponseEntity<>(listUsers, HttpStatus.OK);
         return new ResponseEntity<>(authService.login(request),HttpStatus.OK);
     }
     
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDto request){
-        List<UserEntity> listUsers = userRepository.findAll();
         return new ResponseEntity<>(authService.register(request),HttpStatus.OK);
     }
     
