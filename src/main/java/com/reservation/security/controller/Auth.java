@@ -25,9 +25,6 @@ public class Auth {
     @Autowired
     AuthService authService;
     
-    @Autowired
-    UserRepository userRepository;
-    
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto request){
         return new ResponseEntity<>(authService.login(request),HttpStatus.OK);
