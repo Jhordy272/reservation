@@ -29,12 +29,8 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     public TokenDto login(LoginDto request) {
-        System.out.println("request " + request.getUser());
-        
         UserDetails user = userRepository.findByUsername(request.getUser()).orElse(null);
         if (user != null) {
-            System.out.println("username " + user.getUsername());
-            System.out.println("password " + user.getPassword());
             if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 return new TokenDto(jwtService.getToken(user));
             } else {
@@ -52,7 +48,6 @@ public class AuthService {
         user.setId(userRepository.findMaxId() + 1);
         user.setUsername(request.getUsername());
         String hashedPassword = passwordEncoder.encode(request.getPassword());
-        System.out.println("hashedPassword " + hashedPassword);
         user.setPassword(hashedPassword);
         user.setEmail(request.getEmail());
         user.setRol(rol);
